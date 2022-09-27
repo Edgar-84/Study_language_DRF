@@ -1,0 +1,14 @@
+{% extends "cards/base.html" %}
+
+{% block content %}
+<div class="features">
+    <h1>{{ title }}</h1>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_ul }}
+        <button type="submit" class="btn btn-warning">Сохранить</button>
+        <br><br>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock  %}

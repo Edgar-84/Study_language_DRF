@@ -1,0 +1,11 @@
+{% extends "cards/base.html" %}
+
+{% block content %}
+
+<div class="features">
+    <h1>Выберите порядок отображения</h1><br><br>
+    <a href="{% url 'first_lesson' cat_id 0 %}"><li><button class="btn btn-info">Родной язык -> Изучаемый</button></li></a><br>
+    <a href="{% url 'first_lesson' cat_id 1 %}"><li><button class="btn btn-info">Изучаемый -> Родной язык</button></li></a>
+</div>
+
+{% endblock %}

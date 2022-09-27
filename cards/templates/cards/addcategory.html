@@ -1,0 +1,14 @@
+{% extends "cards/base.html" %}
+
+{% block content %}
+<div class="features">
+    <h1>{{ title }}</h1>
+    <form action="{% url 'add_category' %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-warning">Добавить</button>
+        <br><br>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

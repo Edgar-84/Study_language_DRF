@@ -1,0 +1,9 @@
+{% extends "cards/base.html" %}
+
+{% block content %}
+
+<div class="features">
+    <h1>Выберите занятие</h1><br><br>
+    <a href="{% url 'select_category_lesson' %}"><li><button class="btn btn-info">Просмотр карточек и перевода к ним</button></li></a>
+</div>
+{% endblock %}

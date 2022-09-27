@@ -1,0 +1,31 @@
+{% extends "cards/base.html" %}
+
+{% block content %}
+
+<div class="features">
+    {{ title }}
+
+    {% for card in cards %}
+        {% if type_translate == 0 %}
+            <p>{{ card.title_native_language }}</p>
+               {{ card.translate_studied_language }}<br>
+        {% else %}
+            <p>{{ card.translate_studied_language }}</p>
+            {{ card.title_native_language }}<br>
+
+        {% endif %}
+    {% endfor %}
+
+<p>Current Card: <b>{{page_obj.number}}</b></p>
+
+<ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+        <li><a href="?page={{ page_obj.previous_page_number }}"><<<</a></li>
+    {% endif%}
+    {% if page_obj.has_next %}
+        <li><a href="?page={{ page_obj.next_page_number }}">>>></a></li>
+    {% endif%}
+</ul>
+
+</div>
+{% endblock %}

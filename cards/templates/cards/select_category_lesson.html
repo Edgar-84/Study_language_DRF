@@ -1,0 +1,10 @@
+{% extends "cards/base.html" %}
+
+{% block content %}
+<div class="features">
+    <h1>{{ title }}</h1>
+        {% for c in cats %}
+            <p><li><a href="{% url 'select_language_review' c.id %}">{{ c.title }}</a></li></p>
+        {% endfor %}
+</div>
+{% endblock %}

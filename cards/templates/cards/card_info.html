@@ -1,0 +1,23 @@
+{% extends "cards/base.html" %}
+
+{% block content %}
+<div class="features">
+    <div class="card text-center bg-secondary text-warning" style="width: 18rem; margin: 0 auto;
+     text-align: center; ">
+    {% if card.photo %}
+        <img class="mx-auto mb-3 d-block" src="{{ card.photo.url }}" alt="...">
+    {% endif %}
+        <div class="card-body">
+            <h4 class="card-title">Название:</h4>
+            <h5 class="card-title">{{ card.title_native_language }}</h5><br>
+            <h4 class="card-subtitle mb-2 ">Перевод:</h4>
+            <h5 class="card-subtitle mb-2 ">{{ card.translate_studied_language }}</h5>
+            {% if card.usage_example %}
+                <p class="card-text">Пример применения: {{ card.usage_example }}</p>
+            {% endif %}
+            <a href="{% url 'update_card' card.id %}"><li><button class="btn btn-info">Изменить карточку</button></li></a><br>
+            <a href="{% url 'delete_card' card.id %}"><li><button class="btn btn-danger">Удалить карточку</button></li></a>
+      </div>
+    </div>
+</div>
+{% endblock %}
