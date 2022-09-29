@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 
 from cards.views import *
 from config import settings
@@ -27,6 +27,8 @@ urlpatterns = [
     path('api/v1/card/', CardAPIList.as_view()),
     path('api/v1/card/<int:pk>/', CardAPIUpdate.as_view()),
     path('api/v1/carddelete/<int:pk>/', CardAPIDestroy.as_view()),
+    path('api/v1/auth/', include('djoser.urls')),
+    re_path(r'^auth/', include('djoser.urls.authtoken')),
 ]
 
 if settings.DEBUG:
