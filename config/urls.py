@@ -20,11 +20,13 @@ from django.urls import path, include
 from cards.views import *
 from config import settings
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/cardlist/', CardAPIList.as_view()),
-    path('api/v1/cardlist/<int:pk>/', CardAPIUpdate.as_view()),
-    path('api/v1/carddetail/<int:pk>/', CardAPIDetailView.as_view()),
+    path('api/v1/drf_auth/', include('rest_framework.urls')),
+    path('api/v1/card/', CardAPIList.as_view()),
+    path('api/v1/card/<int:pk>/', CardAPIUpdate.as_view()),
+    path('api/v1/carddelete/<int:pk>/', CardAPIDestroy.as_view()),
 ]
 
 if settings.DEBUG:
