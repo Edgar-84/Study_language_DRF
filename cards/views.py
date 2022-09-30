@@ -1,25 +1,39 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 
-from .models import Card
+from .models import Card, Category
 from .permissions import IsAdminOrReadOnly
-from .serializers import CardSerializer
+from .serializers import CardSerializer, CategorySerializer
 
 
 class CardAPIList(generics.ListCreateAPIView):
-    queryset = Card.objects.all()
     serializer_class = CardSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, )
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return Card.objects.filter(user=self.request.user)
 
 
 class CardAPIUpdate(generics.RetrieveUpdateAPIView):
-    queryset = Card.objects.all()
     serializer_class = CardSerializer
     permission_classes = (IsAuthenticated, )
 
+    def get_queryset(self):
+        return Card.objects.filter(user=self.request.user)
+
 
 class CardAPIDestroy(generics.RetrieveDestroyAPIView):
-    queryset = Card.objects.all()
     serializer_class = CardSerializer
     permission_classes = (IsAdminOrReadOnly, )
+
+    def get_queryset(self):
+        return Card.objects.filter(user=self.request.user)
+
+
+class CategoryAPIList(generics.ListCreateAPIView):
+    serializer_class = CategorySerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
 

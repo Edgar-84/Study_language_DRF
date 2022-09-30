@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/v1/card/', CardAPIList.as_view()),
     path('api/v1/card/<int:pk>/', CardAPIUpdate.as_view()),
     path('api/v1/carddelete/<int:pk>/', CardAPIDestroy.as_view()),
+    path('api/v1/category/', CategoryAPIList.as_view()),
     path('api/v1/auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
 ]
