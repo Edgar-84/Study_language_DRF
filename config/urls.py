@@ -28,6 +28,8 @@ urlpatterns = [
     path('api/v1/card/<int:pk>/', CardAPIUpdate.as_view()),
     path('api/v1/carddelete/<int:pk>/', CardAPIDestroy.as_view()),
     path('api/v1/category/', CategoryAPIList.as_view()),
+    path('api/v1/category/<int:pk>/', CategoryAPIUpdate.as_view()),
+    path('api/v1/categorydelete/<int:pk>/', CategoryAPIDestroy.as_view()),
     path('api/v1/auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
 ]
