@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 
 from cards.models import Card, Category
-from cards.serializers import CardSerializer
+from cards.serializers import CardSerializer, CategorySerializer
 
 
 class CardsTests(APITestCase):
@@ -49,6 +49,8 @@ class CardsTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
         response = self.client.get(reverse("user_cards"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Card.objects.all().count(), 2)
+        self.assertEqual(response.data['count'], 1)
 
     def test_cards_create_invalid(self):
         response = self.client.post(reverse("user_cards"), self.data, format='json')
@@ -115,8 +117,29 @@ class CardsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertNotEqual(result, Card.objects.all())
 
+    def test_category_info_invalid(self):
+        response = self.client.get(reverse("user_category"))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_category_info_valid(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test2_token.key)
+        response = self.client.get(reverse("user_category"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(Category.objects.all().count(), 2)
+
+    def test_category_create_invalid(self):
+        response = self.client.post(reverse("user_category"), {"title": "Simple words"})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_category_create_invalid_similar(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
+        response = self.client.post(reverse("user_category"), {"title": "Category first user"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_category_create_valid(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
         response = self.client.post(reverse("user_category"), {"title": "Simple words"})
+        serializer_data = CategorySerializer(Category.objects.get(title="Simple words")).data
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["title"], "Simple words")
+        self.assertEqual(serializer_data, response.data)

@@ -17,7 +17,8 @@ class CardSerializer(serializers.ModelSerializer):
         if category_data in Category.objects.filter(user=user_info):
             result = Card.objects.create(**validated_data)
             return result
-        raise serializers.ValidationError({"category": "you have entered a non-existent list"})
+        else:
+            raise serializers.ValidationError({"category": "you have entered a non-existent list"})
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -26,3 +27,11 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
+
+    def create(self, validated_data):
+        categories = Category.objects.filter(user=validated_data.get("user")).values_list('title', flat=True)
+        if validated_data.get("title") in categories:
+            raise serializers.ValidationError({"category": "You have list with this name"})
+        else:
+            result = Category.objects.create(**validated_data)
+            return result
