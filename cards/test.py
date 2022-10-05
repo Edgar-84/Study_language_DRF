@@ -143,3 +143,51 @@ class CardsTests(APITestCase):
         serializer_data = CategorySerializer(Category.objects.get(title="Simple words")).data
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(serializer_data, response.data)
+
+    def test_category_detail_info_invalid(self):
+        response = self.client.get(reverse("update_category", kwargs={"pk": self.one_category.id}))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_category_detail_info_invalid_pk(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
+        response = self.client.get(reverse("update_category", kwargs={"pk": self.two_category.id}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_category_detail_info_valid(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
+        response = self.client.get(reverse("update_category", kwargs={"pk": self.one_category.id}))
+        serializer_data = CategorySerializer(self.one_category).data
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(serializer_data, response.data)
+
+    def test_category_update_invalid(self):
+        response = self.client.put(reverse("update_category", kwargs={"pk": self.one_category.id}), {"title": "New"})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_category_update_invalid_pk(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
+        response = self.client.put(reverse("update_category", kwargs={"pk": self.two_category.id}), {"title": "New"})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_category_update_valid(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
+        response = self.client.put(reverse("update_category", kwargs={"pk": self.one_category.id}), {"title": "New"})
+        serializer_data = CategorySerializer(Category.objects.get(title="New")).data
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer_data)
+
+    def test_category_delete_invalid(self):
+        response = self.client.delete(reverse("delete_category", kwargs={"pk": self.one_category.id}))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_category_delete_invalid_pk(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
+        response = self.client.delete(reverse("delete_category", kwargs={"pk": self.two_category.id}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_category_delete_valid(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
+        result = Category.objects.all()
+        response = self.client.delete(reverse("delete_category", kwargs={"pk": self.one_category.id}))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertNotEqual(result, Category.objects.all())
