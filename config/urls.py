@@ -16,23 +16,20 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include, re_path
+from .yasg import urlpatterns as doc_urls
 
-from cards.views import *
 from config import settings
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/drf_auth/', include('rest_framework.urls')),
-    path('api/v1/card/', CardAPIList.as_view(), name="user_cards"),
-    path('api/v1/card/<int:pk>/', CardAPIUpdate.as_view(), name="update_cards"),
-    path('api/v1/carddelete/<int:pk>/', CardAPIDestroy.as_view(), name="delete_card"),
-    path('api/v1/category/', CategoryAPIList.as_view(), name="user_category"),
-    path('api/v1/category/<int:pk>/', CategoryAPIUpdate.as_view(), name="update_category"),
-    path('api/v1/categorydelete/<int:pk>/', CategoryAPIDestroy.as_view(), name="delete_category"),
     path('api/v1/auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
+    path('api/v1/', include('cards.urls')),
 ]
+
+urlpatterns += doc_urls
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

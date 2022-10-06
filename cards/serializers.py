@@ -35,3 +35,11 @@ class CategorySerializer(serializers.ModelSerializer):
         else:
             result = Category.objects.create(**validated_data)
             return result
+
+
+class SelectedCategorySerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Card
+        exclude = ("time_create", "time_update")

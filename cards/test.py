@@ -191,3 +191,18 @@ class CardsTests(APITestCase):
         response = self.client.delete(reverse("delete_category", kwargs={"pk": self.one_category.id}))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertNotEqual(result, Category.objects.all())
+
+    def test_selected_category_invalid(self):
+        response = self.client.get(reverse("selected_category_cards", kwargs={"pk": self.one_category.id}))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_selected_category_invalid_pk(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
+        response = self.client.get(reverse("selected_category_cards", kwargs={"pk": self.two_category.id}))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data["category"], "you have entered a non-existent list")
+
+    def test_selected_valid(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
+        response = self.client.get(reverse("selected_category_cards", kwargs={"pk": self.one_category.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
