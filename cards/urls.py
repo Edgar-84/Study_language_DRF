@@ -4,11 +4,11 @@ from .views import *
 
 
 urlpatterns = [
-    path('card/', CardAPIList.as_view(), name="user_cards"),
-    path('card/<int:pk>/', CardAPIUpdate.as_view(), name="update_cards"),
-    path('carddelete/<int:pk>/', CardAPIDestroy.as_view(), name="delete_card"),
-    path('category/', CategoryAPIList.as_view(), name="user_category"),
-    path('category/<int:pk>/', CategoryAPIUpdate.as_view(), name="update_category"),
-    path('categorydelete/<int:pk>/', CategoryAPIDestroy.as_view(), name="delete_category"),
-    path('selected_category/<int:pk>/', SelectedCategoryCardsAPIList.as_view(), name="selected_category_cards"),
+    path('card/', CardViewSet.as_view({'get': 'list', 'post': 'create'}), name='card_list'),
+    path('card/<int:pk>/', CardViewSet.as_view({'get': 'retrieve', 'put': 'update',
+                                                'delete': 'destroy'}), name='card_detail'),
+    path('category/', CategoryViewSet.as_view({'get': 'list', 'post': 'create'}), name='category_list'),
+    path('category/<int:pk>/', CategoryViewSet.as_view({'get': 'retrieve', 'put': 'update',
+                                                        'delete': 'destroy'}), name='category_detail'),
+    path('selected_category/<int:pk>/', SelectedCategoryViewSet.as_view({'get': 'list'}), name='selected_category'),
 ]

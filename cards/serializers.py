@@ -3,12 +3,14 @@ from rest_framework import serializers
 from .models import Card, Category
 
 
-class CardSerializer(serializers.ModelSerializer):
+class CardListSerializer(serializers.ModelSerializer):
+    """View list cards"""
+
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Card
-        fields = '__all__'
+        fields = ("id", "user", "category", "title_native_language", "translate_studied_language")
 
     def create(self, validated_data):
         category_data = validated_data.get('category')
@@ -21,12 +23,24 @@ class CardSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"category": "you have entered a non-existent list"})
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class CardDetailSerializer(serializers.ModelSerializer):
+    """View all info about chosen card"""
+
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Card
+        fields = '__all__'
+
+
+class CategoryListSerializer(serializers.ModelSerializer):
+    """View list categories"""
+
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ("id", "user", "title")
 
     def create(self, validated_data):
         categories = Category.objects.filter(user=validated_data.get("user")).values_list('title', flat=True)
@@ -37,9 +51,11 @@ class CategorySerializer(serializers.ModelSerializer):
             return result
 
 
-class SelectedCategorySerializer(serializers.ModelSerializer):
+class CategoryDetailSerializer(serializers.ModelSerializer):
+    """View all info about chosen category"""
+
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
-        model = Card
-        exclude = ("time_create", "time_update")
+        model = Category
+        fields = "__all__"
