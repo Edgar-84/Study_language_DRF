@@ -45,10 +45,18 @@ class CategoryListSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         categories = Category.objects.filter(user=validated_data.get("user")).values_list('title', flat=True)
         if validated_data.get("title") in categories:
-            raise serializers.ValidationError({"category": "You have list with this name"})
+            raise serializers.ValidationError({"category": "Create failed. You have list with this name"})
         else:
             result = Category.objects.create(**validated_data)
             return result
+
+    def update(self, instance, validated_data):
+        categories = Category.objects.filter(user=validated_data.get("user")).values_list('title', flat=True)
+        if validated_data.get("title") in categories:
+            raise serializers.ValidationError({"category": "Update failed. You have list with this name"})
+        else:
+            instance = super(CategoryListSerializer, self).update(instance, validated_data)
+            return instance
 
 
 class CategoryDetailSerializer(serializers.ModelSerializer):

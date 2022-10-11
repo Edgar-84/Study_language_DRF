@@ -26,6 +26,7 @@ class CardsTests(APITestCase):
         self.user_test2_token = Token.objects.create(user=self.user_test2)
 
         self.one_category = Category.objects.create(title="Category first user", user=self.user_test1)
+        self.one_category_two = Category.objects.create(title="Second category", user=self.user_test1)
         self.two_category = Category.objects.create(title="Category second user", user=self.user_test2)
 
         self.one_card = Card.objects.create(
@@ -67,6 +68,7 @@ class CardsTests(APITestCase):
                                                            "category": self.two_category.id})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data["category"], "you have entered a non-existent list")
 
     def test_cards_create_valid(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
@@ -130,7 +132,7 @@ class CardsTests(APITestCase):
         response = self.client.get(reverse("category_list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['count'], 1)
-        self.assertEqual(Category.objects.all().count(), 2)
+        self.assertEqual(Category.objects.all().count(), 3)
 
     def test_category_create_invalid(self):
         response = self.client.post(reverse("category_list"), {"title": "Simple words"})
@@ -140,6 +142,7 @@ class CardsTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
         response = self.client.post(reverse("category_list"), {"title": "Category first user"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['category'], "Create failed. You have list with this name")
 
     def test_category_create_valid(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
@@ -172,6 +175,13 @@ class CardsTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
         response = self.client.put(reverse("category_detail", kwargs={"pk": self.two_category.id}), {"title": "New"})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_category_update_invalid_sama_name(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
+        response = self.client.put(reverse("category_detail", kwargs={"pk": self.one_category.id}),
+                                   {"title": "Second category"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['category'], "Update failed. You have list with this name")
 
     def test_category_update_valid(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token.key)
